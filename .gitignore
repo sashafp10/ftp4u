@@ -1,0 +1,11 @@
+
+ftp4u.Core/bin/
+ftp4u.Core/obj/
+ftp4u.Server/bin/
+ftp4u.Server/obj/
+
+
+UnitTests/ftp4u.Core.Test/bin/
+UnitTests/ftp4u.Core.Test/obj/
+UnitTests/ftp4u.Server.Test/bin/
+UnitTests/ftp4u.Server.Test/obj/

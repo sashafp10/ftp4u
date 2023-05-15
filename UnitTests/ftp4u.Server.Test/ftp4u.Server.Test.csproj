@@ -21,4 +21,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\ftp4u.Core\ftp4u.Core.csproj" />
+    <ProjectReference Include="..\..\ftp4u.Server\ftp4u.Server.csproj" />
+  </ItemGroup>
+
 </Project>
