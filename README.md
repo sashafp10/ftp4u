@@ -11,3 +11,5 @@ It should be:
 
 With all this AI stuff happening right now, I've decided to 1) utilize chatGPT or co-pilot as a team 2) spend not more than 1 hour for each commit.
 It's curious to see how it'll go - creating a real-world product with me in a team-leader role and chatCPT in the role of my team :) .
+
+Also I want to explore how dotNet is good without VS or Rider: only VS code and dotnet CLI (spoiler: worse than I've expected).
