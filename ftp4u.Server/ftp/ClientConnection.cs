@@ -6,48 +6,68 @@ namespace ftp4u.Server.ftp
 {
     public class ClientConnection : IClientConnection
     {
-        private readonly IFtpCommandHandler commandHandler;
-        private readonly TcpClient clientSocket;
-        private NetworkStream networkStream;
-        private StreamReader reader;
-        private StreamWriter writer;
+        private readonly IFtpCommandHandler _commandHandler;
+        private readonly ITcpClientWrapper _clientSocket;
+        private Stream? _networkStream;
+        private StreamReader? _reader;
+        private StreamWriter? _writer;
 
-        public ClientConnection(TcpClient clientSocket, IFtpCommandHandler commandHandler)
+        public ClientConnection(ITcpClientWrapper clientSocket, IFtpCommandHandler commandHandler)
         {
-            this.clientSocket = clientSocket;
-            this.commandHandler = commandHandler;
-            networkStream = clientSocket.GetStream();
-            reader = new StreamReader(networkStream, Encoding.ASCII);
-            writer = new StreamWriter(networkStream, Encoding.ASCII) { AutoFlush = true };
+            _clientSocket = clientSocket;
+            _commandHandler = commandHandler;
+            _networkStream = clientSocket.GetStream();
+            TryOpenStream();
         }
 
         public void Start()
         {
             SendResponse("220 Service ready.");
 
-            string clientMessage;
-            while ((clientMessage = reader.ReadLine()) != null)
-            {
-                Console.WriteLine($"Received from {clientSocket.Client.RemoteEndPoint}: {clientMessage}");
+            if (_reader != null) {
+                string? clientMessage;
+                while ((clientMessage = _reader.ReadLine()) != null)
+                {
+                    Console.WriteLine($"Received from {_clientSocket.Client.RemoteEndPoint}: {clientMessage}");
 
-                commandHandler.HandleCommand(clientMessage, clientSocket);
+                    _commandHandler.HandleCommand(clientMessage, _clientSocket);
+                }
             }
 
             Cleanup();
         }
 
+        private bool TryOpenStream() {
+            if (_networkStream != null) {
+                _reader = new StreamReader(_networkStream, Encoding.ASCII);
+                _writer = new StreamWriter(_networkStream, Encoding.ASCII) { AutoFlush = true };
+
+                return true;
+            }
+
+            return false;
+        }
+
         private void SendResponse(string message)
         {
-            writer.WriteLine(message);
-            Console.WriteLine($"Sent to {clientSocket.Client.RemoteEndPoint}: {message}");
+            if (_writer == null) {
+                var opened = TryOpenStream();
+                if (!opened) {
+                    string msg = "Can not open network stream for read/write";
+                    Console.WriteLine(msg);
+                    throw new IOException(msg);
+                }
+            }
+            _writer?.WriteLine(message);
+            Console.WriteLine($"Sent to {_clientSocket.Client.RemoteEndPoint}: {message}");
         }
 
         private void Cleanup()
         {
-            reader.Close();
-            writer.Close();
-            networkStream.Close();
-            clientSocket.Close();
+            _reader?.Close();
+            _writer?.Close();
+            _networkStream?.Close();
+            _clientSocket.Close();
         }
     }
 

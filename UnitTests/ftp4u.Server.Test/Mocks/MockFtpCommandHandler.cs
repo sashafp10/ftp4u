@@ -1,4 +1,3 @@
-using System.Net.Sockets;
 using ftp4u.Core.Abstraction;
 
 namespace ftp4u.Server.Test.Mocks
@@ -9,7 +8,7 @@ namespace ftp4u.Server.Test.Mocks
 
         public List<string> GetCommands() => _commands.ToList();
         
-        public void HandleCommand(string command, TcpClient clientSocket)
+        public void HandleCommand(string command, ITcpClientWrapper clientSocket)
         {
             // Mock implementation of the FTP command handling logic for testing
             _commands.Add(command);

@@ -1,0 +1,10 @@
+# Top-most EditorConfig file
+root = true
+
+# All files
+[*]
+
+# Rule to modify
+csharp_style_private_field_prefix = _
+
+# Other rules remain default

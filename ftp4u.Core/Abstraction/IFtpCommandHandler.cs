@@ -1,9 +1,7 @@
-using System.Net.Sockets;
-
 namespace ftp4u.Core.Abstraction
 {
-    public interface IFTPCommandHandler
+    public interface IFtpCommandHandler
     {
-        void HandleCommand(string command, TcpClient clientSocket);
+        void HandleCommand(string command, ITcpClientWrapper clientSocket);
     }
 }

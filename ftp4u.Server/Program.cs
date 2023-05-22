@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Net;
 using System.Net.Sockets;
+using ftp4u.Core;
 using ftp4u.Core.Abstraction;
 using ftp4u.Server.ftp;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +37,7 @@ Console.WriteLine("Hello, World!");
         var serviceProvider = new ServiceCollection()
             .AddTransient<IFtpCommandHandler, FtpCommandHandler>()
             .AddScoped<IClientConnection, ClientConnection>()
+            .AddScoped<ITcpClientWrapper, TcpClientWrapper>()
             // .AddSingleton<ILogger, ConsoleLogger>()
             .BuildServiceProvider();
 
