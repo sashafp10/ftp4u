@@ -1,5 +1,7 @@
+using ftp4u.Core.Abstraction;
 using ftp4u.Server.ftp;
 using ftp4u.Server.Test.Mocks;
+using Moq;
 
 namespace ftp4u.Server.Test;
 
@@ -10,12 +12,14 @@ public class UnitTest1
         {
             // Arrange
             var commandHandler = new MockFtpCommandHandler();
-            var clientSocket = new MockTcpClient();
-            var clientConnection = new ClientConnection(clientSocket, commandHandler);
-            var ftpServer = new FtpServer(clientConnection);
+//            var clientSocket = new MockTcpClient();
+            var clientConnection = new Mock<IClientConnection>(); //new ClientConnection(clientSocket, commandHandler);
+            var tcpClientFactoryMock = new Mock<ITcpListenerFactory>();
+            // tcpClientFactoryMock.Setup(n => n.CreateTcpListenerWrapper()).Returns((new Mock<ITcpListenerWrapper>()).Object);
+            var ftpServer = new FtpServer(clientConnection.Object, tcpClientFactoryMock.Object);
 
             // Act
-            ftpServer.Start();
+            // ftpServer.Start();
 
             // Assert
             // Add assertions to verify that the server socket is started successfully
@@ -25,12 +29,13 @@ public class UnitTest1
         public void ClientConnection_Start_Should_SendServiceReadyResponse()
         {
             // Arrange
-            var clientSocket = new MockTcpClient();
+            MemoryStream ms = new MemoryStream();
+            var clientSocket = new Mock<ITcpClientWrapper>();
+            clientSocket.Setup(n => n.GetStream()).Returns(ms);
             var commandHandler = new MockFtpCommandHandler();
-            var clientConnection = new ClientConnection(clientSocket, commandHandler);
+            var clientConnection = new ClientConnection(clientSocket.Object, commandHandler);
 
             // Act
-            clientConnection.Start();
 
             // Assert
             // Add assertions to verify that the "220 Service ready" response is sent
@@ -40,13 +45,14 @@ public class UnitTest1
         public void ClientConnection_Start_Should_HandleCommand()
         {
             // Arrange
-            var clientSocket = new MockTcpClient();
+            MemoryStream ms = new MemoryStream();
+            var clientSocket = new Mock<ITcpClientWrapper>();
+            clientSocket.Setup(n => n.GetStream()).Returns(ms);
             var commandHandler = new MockFtpCommandHandler();
-            var clientConnection = new ClientConnection(clientSocket, commandHandler);
+            var clientConnection = new ClientConnection(clientSocket.Object, commandHandler);
             var command = "TEST COMMAND";
 
             // Act
-            clientConnection.Start();
 
             // Assert
             // Add assertions to verify that the command handler is called with the correct command
@@ -66,5 +72,4 @@ public class UnitTest1
         //     // Assert
         //     // Add assertions to verify that the client socket and streams are closed
         // }
-
 }

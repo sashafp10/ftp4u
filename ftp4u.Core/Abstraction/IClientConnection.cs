@@ -2,6 +2,6 @@ namespace ftp4u.Core.Abstraction
 {
     public interface IClientConnection
     {
-        void Start();
+        Task StartAsync(System.Net.Sockets.TcpClient clientSocket);
     }
 }

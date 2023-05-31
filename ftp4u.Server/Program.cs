@@ -1,14 +1,12 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using System.Net;
-using System.Net.Sockets;
-using ftp4u.Core;
 using ftp4u.Core.Abstraction;
+using ftp4u.Core.Network;
 using ftp4u.Server.ftp;
 using Microsoft.Extensions.DependencyInjection;
 
 Console.WriteLine("Hello, World!");
 
-        // Setup dependency injection container (e.g., using a framework like Microsoft.Extensions.DependencyInjection)
+// Setup dependency injection container (e.g., using a framework like Microsoft.Extensions.DependencyInjection)
 
 //         var serviceProvider = new ServiceCollection()
 //             .AddSingleton<IFtpCommandHandler, FtpCommandHandler>()
@@ -34,12 +32,15 @@ Console.WriteLine("Hello, World!");
 //             clientConnection.Start();
 //         }
 
-        var serviceProvider = new ServiceCollection()
-            .AddTransient<IFtpCommandHandler, FtpCommandHandler>()
-            .AddScoped<IClientConnection, ClientConnection>()
-            .AddScoped<ITcpClientWrapper, TcpClientWrapper>()
-            // .AddSingleton<ILogger, ConsoleLogger>()
-            .BuildServiceProvider();
+var serviceProvider = new ServiceCollection()
+    .AddTransient<IFtpCommandHandler, FtpCommandHandler>()
+    .AddScoped<IClientConnection, ClientConnection>()
+    .AddScoped<ITcpClientWrapper, TcpClientWrapper>()
+    .AddSingleton<ITcpListenerFactory, TcpListenerFactory>()
+    .AddScoped<FtpServer>() 
+// .AddSingleton<ILogger, ConsoleLogger>()
+    .BuildServiceProvider();
 
-        var ftpServer = serviceProvider.GetRequiredService<FtpServer>();
-        ftpServer.Start();
+
+var ftpServer = serviceProvider.GetRequiredService<FtpServer>();
+ftpServer.Start();

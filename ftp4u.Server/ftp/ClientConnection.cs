@@ -16,22 +16,28 @@ namespace ftp4u.Server.ftp
         {
             _clientSocket = clientSocket;
             _commandHandler = commandHandler;
-            _networkStream = clientSocket.GetStream();
+            
             TryOpenStream();
         }
 
-        public void Start()
+        public async Task StartAsync(TcpClient clientSocket)
         {
+            Console.WriteLine("Connection strted async!");
+            _networkStream = clientSocket.GetStream();
             SendResponse("220 Service ready.");
+
+            Console.WriteLine("Connection strted async!");
 
             if (_reader != null) {
                 string? clientMessage;
+                Console.WriteLine("Reader is not empty.");
                 while ((clientMessage = _reader.ReadLine()) != null)
                 {
                     Console.WriteLine($"Received from {_clientSocket.Client.RemoteEndPoint}: {clientMessage}");
 
-                    _commandHandler.HandleCommand(clientMessage, _clientSocket);
+                    await Task.Run(() => _commandHandler.HandleCommand(clientMessage, _clientSocket));
                 }
+                Console.WriteLine("Nothing to read from client connection");
             }
 
             Cleanup();
@@ -59,7 +65,7 @@ namespace ftp4u.Server.ftp
                 }
             }
             _writer?.WriteLine(message);
-            Console.WriteLine($"Sent to {_clientSocket.Client.RemoteEndPoint}: {message}");
+            Console.WriteLine($"Sent to {(_clientSocket?.Client?.RemoteEndPoint?.ToString() ?? "<unknown client>")}: {message}");
         }
 
         private void Cleanup()
@@ -70,5 +76,4 @@ namespace ftp4u.Server.ftp
             _clientSocket.Close();
         }
     }
-
 }

@@ -1,16 +1,16 @@
 using System.Net.Sockets;
 using ftp4u.Core.Abstraction;
 
-namespace ftp4u.Core
+namespace ftp4u.Core.Network
 {
 
     public class TcpClientWrapper : ITcpClientWrapper
     {
         private readonly TcpClient _tcpClient;
 
-        public TcpClientWrapper(TcpClient tcpClient)
+        public TcpClientWrapper()
         {
-            _tcpClient = tcpClient;
+            _tcpClient = new TcpClient();
         }
 
         public void Close()
@@ -18,9 +18,7 @@ namespace ftp4u.Core
             _tcpClient.Close();
         }
 
-        public TcpClient Client => _tcpClient;
-
-        Socket ITcpClientWrapper.Client { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        Socket ITcpClientWrapper.Client { get => _tcpClient.Client; }
 
         public void Dispose()
         {

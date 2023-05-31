@@ -4,7 +4,7 @@ namespace ftp4u.Core.Abstraction
 {
     public interface ITcpClientWrapper
     {
-        Socket Client { get; set; }
+        Socket Client { get; }
 
         void Close();
         Stream? GetStream();

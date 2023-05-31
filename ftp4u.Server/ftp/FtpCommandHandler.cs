@@ -6,7 +6,8 @@ namespace ftp4u.Server.ftp
     {
         public void HandleCommand(string command, ITcpClientWrapper clientSocket)
         {
-            // Handle FTP commands here
+           Console.WriteLine($"Command received: {command}");
+           // Handle FTP commands here
             // Implement the necessary logic based on the received command
         }
 
